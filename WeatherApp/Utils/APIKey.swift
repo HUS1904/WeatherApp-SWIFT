@@ -1,8 +1,5 @@
-//
-//  APIKey.swift
-//  WeatherApp
-//
-//  Created by Hussein Jarrah on 16/03/2025.
-//
-
 import Foundation
+
+struct APIKey {
+    static let openWeatherAPIKey = "d63ace15f43fa9ad250fcd0b88a420cd"
+}

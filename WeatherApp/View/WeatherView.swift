@@ -1,24 +1,41 @@
-//
-//  ContentView.swift
-//  WeatherApp
-//
-//  Created by Hussein Jarrah on 16/03/2025.
-//
-
 import SwiftUI
 
-struct ContentView: View {
+struct WeatherView: View {
+    @StateObject private var viewModel = WeatherViewModel()
+    @State private var city = "Copenhagen"
+
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            TextField("Enter city", text: $city)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+
+            Button("Get Forecast") {
+                viewModel.fetchWeather(for: city)
+            }
+            .padding()
+
+            if viewModel.isLoading {
+                ProgressView()
+            } else if !viewModel.weatherList.isEmpty {
+                Text(viewModel.cityName)
+                    .font(.title)
+
+                List(viewModel.weatherList, id: \.dt) { forecast in
+                    HStack {
+                        Text(forecast.dt_txt)
+                        Spacer()
+                        Text("\(forecast.main.temp, specifier: "%.1f")°C")
+                    }
+                }
+            } else if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+            }
         }
         .padding()
     }
 }
-
 #Preview {
-    ContentView()
+    WeatherView()
 }
