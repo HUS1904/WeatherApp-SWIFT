@@ -2,25 +2,28 @@ import Foundation
 
 @MainActor
 class WeatherViewModel: ObservableObject {
-    @Published var weatherList: [WeatherForecast] = []
-    @Published var cityName: String = ""
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+    @Published var currentWeather: WeatherResponse?
 
     private let weatherService = WeatherService()
+    private let locationService = LocationService()
 
-    func fetchWeather(for city: String) {
-        isLoading = true
-        Task {
-            do {
-                let weatherResponse = try await weatherService.fetchWeather(for: city)
-                self.weatherList = weatherResponse.list
-                self.cityName = weatherResponse.city.name
-                self.errorMessage = nil
-            } catch {
-                self.errorMessage = error.localizedDescription
+    func fetchWeatherForCurrentLocation() {
+        locationService.onLocationUpdate = { [weak self] location in
+            Task {
+                do {
+                    print("📍 Fetching weather for: \(location.latitude), \(location.longitude)")
+                    let weather = try await self?.weatherService.fetchWeather(lat: location.latitude, lon: location.longitude)
+                    self?.currentWeather = weather
+                    print("✅ Weather fetched: \(String(describing: weather))")
+                } catch {
+                    print("❌ Error fetching weather: \(error.localizedDescription)")
+                }
             }
-            isLoading = false
         }
+        locationService.requestLocation()
+    }
+
+    func setWeatherForCity(weatherData: WeatherResponse) { // ✅ Ensure this method exists
+        self.currentWeather = weatherData
     }
 }

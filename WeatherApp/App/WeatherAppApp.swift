@@ -1,17 +1,17 @@
-//
-//  WeatherAppApp.swift
-//  WeatherApp
-//
-//  Created by Hussein Jarrah on 16/03/2025.
-//
-
 import SwiftUI
 
 @main
 struct WeatherAppApp: App {
+    @StateObject var weatherViewModel = WeatherViewModel()
+    @StateObject var searchViewModel = SearchViewModel()
+
     var body: some Scene {
         WindowGroup {
-            WeatherView()
+            NavigationStack {
+                MainWeatherView()
+                    .environmentObject(weatherViewModel) // ✅ Provide WeatherViewModel
+                    .environmentObject(searchViewModel)  // ✅ Provide SearchViewModel
+            }
         }
     }
 }
