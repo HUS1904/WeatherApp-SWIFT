@@ -2,16 +2,16 @@ import SwiftUI
 
 @main
 struct WeatherAppApp: App {
-    @StateObject var weatherViewModel = WeatherViewModel()
-    @StateObject var searchViewModel = SearchViewModel()
+    @StateObject private var weatherViewModel = WeatherViewModel()
+    @StateObject private var searchViewModel = SearchViewModel() // ✅ Add this
 
     var body: some Scene {
         WindowGroup {
             NavigationStack {
                 MainWeatherView()
-                    .environmentObject(weatherViewModel) // ✅ Provide WeatherViewModel
-                    .environmentObject(searchViewModel)  // ✅ Provide SearchViewModel
             }
+            .environmentObject(weatherViewModel)
+            .environmentObject(searchViewModel) // ✅ Inject SearchViewModel here
         }
     }
 }

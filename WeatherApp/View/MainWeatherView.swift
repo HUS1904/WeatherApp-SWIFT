@@ -4,62 +4,45 @@ struct MainWeatherView: View {
     @EnvironmentObject var weatherViewModel: WeatherViewModel
 
     var body: some View {
-        VStack {
-            if let weather = weatherViewModel.currentWeather {
-                CityInfoView(
-                    cityName: weather.city.name,
-                    country: weather.city.country,
-                    description: weather.list.first?.weather.first?.description ?? "N/A"
-                )
-            } else {
-                ProgressView("Fetching weather...")
-            }
+        ScrollView { // ✅ Scrollable content
+            VStack(spacing: 20) { // ✅ Adjust the spacing here
+                if let weatherResponse = weatherViewModel.currentWeather {
+                    CityInfoView(weatherResponse: weatherResponse)
+                        .padding(.top, 10) // ✅ Adjust top spacing
 
-            Spacer()
+                    SunTimeView(weatherResponse: weatherResponse)
+                        .padding(.top, 5) // ✅ Adjust space between CityInfo and SunTime
 
-            NavigationLink(destination: SearchView()) {
-                Text("🔍 Search for a City")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                    HourlyForecastView(weatherResponse: weatherResponse)
+                        .padding(.top, 10) // ✅ Adjust space between SunTime and Hourly
+
+                    WeeklyForecastView(weatherResponse: weatherResponse)
+                        .padding(.top, 10) // ✅ Adjust space between Hourly and Weekly
+                } else {
+                    ProgressView("Fetching weather...")
+                        .padding(.top, 20)
+                }
+
+                NavigationLink(destination: SearchView()) {
+                    Text("🔍 Search for a City")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding(.top, 20) // ✅ Adjust space before the button
+                .padding(.bottom, 30) // ✅ Ensure spacing at the bottom for scrollability
             }
-            .padding()
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 0) // ✅ Optional padding on the sides for alignment
         }
         .onAppear {
-            weatherViewModel.fetchWeatherForCurrentLocation()
+            if weatherViewModel.currentWeather == nil {
+                weatherViewModel.fetchWeatherForCurrentLocation(forceRefresh: false)
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(red: 0.156, green: 0.156, blue: 0.156))
+        .edgesIgnoringSafeArea(.all)
     }
-}
-
-#Preview {
-    MainWeatherView()
-        .environmentObject(mockWeatherViewModel()) // ✅ Provide mock data
-}
-
-// ✅ Fix: Ensure mock function is marked as `@MainActor`
-@MainActor
-func mockWeatherViewModel() -> WeatherViewModel {
-    let viewModel = WeatherViewModel()
-    viewModel.currentWeather = WeatherResponse(
-        list: [
-            WeatherForecast(
-                dt: 1640000000,
-                main: MainWeather(temp: 22.5, feels_like: 21.0, temp_min: 20.0, temp_max: 25.0, pressure: 1012, humidity: 60),
-                weather: [WeatherDetail(main: "Cloudy", description: "Partly cloudy", icon: "02d")],
-                wind: Wind(speed: 3.0, deg: 180, gust: 5.0),
-                clouds: Clouds(all: 20),
-                visibility: 10000,
-                dt_txt: "2025-03-17 12:00:00"
-            )
-        ],
-        city: CityInfo(
-            name: "Copenhagen",
-            coord: Coordinates(lat: 55.6761, lon: 12.5683),
-            country: "Denmark",
-            sunrise: 1640000000,
-            sunset: 1640030000
-        )
-    )
-    return viewModel
 }

@@ -1,19 +1,19 @@
 import SwiftUI
 
 struct CityCardView: View {
-    let weatherData: WeatherResponse
+    let weatherResponse: WeatherResponse // ✅ Consistent
 
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(weatherData.city.name)
+                Text(weatherResponse.city.name)
                     .font(.headline)
-                Text(weatherData.city.country)
+                Text(weatherResponse.city.country)
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
             Spacer()
-            Text("\(weatherData.list.first?.main.temp ?? 0, specifier: "%.1f")°C")
+            Text("\(weatherResponse.list.first?.main.temp ?? 0, specifier: "%.1f")°C")
                 .bold()
         }
         .padding()
@@ -22,3 +22,4 @@ struct CityCardView: View {
         .shadow(radius: 2)
     }
 }
+
