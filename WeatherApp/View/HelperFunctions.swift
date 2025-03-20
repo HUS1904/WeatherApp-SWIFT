@@ -3,7 +3,7 @@ import SwiftUI
 
 // ✅ Convert UNIX timestamp to readable time format (adjusted for timezone)
 func formatUnixTime(_ timestamp: Int, _ timeZoneOffset: Int) -> String {
-    let adjustedTime = timestamp + timeZoneOffset
+    let adjustedTime = timestamp
     let date = Date(timeIntervalSince1970: TimeInterval(adjustedTime))
 
     let formatter = DateFormatter()
@@ -12,6 +12,9 @@ func formatUnixTime(_ timestamp: Int, _ timeZoneOffset: Int) -> String {
 
     return formatter.string(from: date)
 }
+
+
+
 
 // ✅ Map OpenWeather icons to SF Symbols
 func mapWeatherIcon(_ iconCode: String) -> String {

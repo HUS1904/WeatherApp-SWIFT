@@ -3,23 +3,39 @@ import Foundation
 @MainActor
 class SearchViewModel: ObservableObject {
     @Published var savedCities: [WeatherResponse] = []
+    @Published var searchResults: [CitySearchResult] = []
+
+    private let weatherService = WeatherService()
 
     func searchCity(cityName: String) {
-        if savedCities.contains(where: { $0.city.name.lowercased() == cityName.lowercased() }) {
-                print("⚠️ City already exists in saved list: \(cityName)")
-                return
+        guard cityName.count > 2 else {
+            searchResults = []
+            return
         }
-        
+
         Task {
             do {
-                let weatherData = try await WeatherService().fetchWeather(for: cityName)
-                DispatchQueue.main.async {
-                    self.savedCities.append(weatherData)
-                }
-                print("✅ Weather fetched")
+                searchResults = try await weatherService.searchCity(cityName: cityName)
             } catch {
-                print("❌ Error searching city: \(error.localizedDescription)")
+                print("❌ Error searching city '\(cityName)': \(error.localizedDescription)")
+                searchResults = []
             }
         }
     }
+
+    func addCity(_ city: CitySearchResult) {
+        Task {
+            do {
+                let weather = try await weatherService.fetchWeather(lat: city.lat, lon: city.lon)
+                DispatchQueue.main.async {
+                    self.savedCities.append(weather)
+                    print("✅ Weather fetched for city: \(city.name)")
+                }
+            } catch {
+                print("❌ Error adding city '\(city.name)': \(error)")
+            }
+        }
+    }
+
+
 }

@@ -5,7 +5,7 @@ struct WeeklyForecastView: View {
 
     var weeklyData: [DailyWeather] {
         let groupedData = Dictionary(grouping: weatherResponse.list) { forecast in
-            formatDay(forecast.dt, weatherResponse.city.timezone)
+            formatDay(forecast.dt, weatherResponse.city.timezone ?? 0)
         }
 
         return groupedData.map { (day, forecasts) in

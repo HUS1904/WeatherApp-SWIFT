@@ -9,7 +9,7 @@ struct HourlyForecastView: View {
 
     var hourlyData: [HourlyWeather] {
         let processedData = weatherResponse.list.map { forecast in
-            let time = formatUnixTime(forecast.dt, weatherResponse.city.timezone)
+            let time = formatUnixTime(forecast.dt, weatherResponse.city.timezone ?? 0)
             let icon = mapWeatherIcon(forecast.weather.first?.icon ?? "01d")
             let description = forecast.weather.first?.description.capitalized ?? "N/A"
             let temp = "\(Int(forecast.main.temp))°"

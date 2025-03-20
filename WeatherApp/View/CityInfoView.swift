@@ -35,7 +35,7 @@ struct CityInfoView: View {
 
             // Feels Like Temperature with custom "°"
             HStack(alignment: .firstTextBaseline, spacing: 0) {
-                Text("Feels Like \(weatherResponse.list.first?.main.feels_like ?? 0, specifier: "%.1f")") // Text and number
+                Text("Feels Like \(weatherResponse.list.first?.main.feels_like ?? 0, specifier: "%.0f")") // Text and number
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white.opacity(0.8))
                 
