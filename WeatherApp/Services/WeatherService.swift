@@ -48,7 +48,7 @@ class WeatherService {
 
         // Temporary debugging
         if let jsonString = String(data: data, encoding: .utf8) {
-            print("🟢 JSON Response: \(jsonString)")
+            //print("🟢 JSON Response: \(jsonString)")
         }
 
         do {
