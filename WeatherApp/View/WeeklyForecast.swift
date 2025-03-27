@@ -4,26 +4,30 @@ struct WeeklyForecastView: View {
     let weatherResponse: WeatherResponse
 
     var weeklyData: [DailyWeather] {
-        let groupedData = Dictionary(grouping: weatherResponse.list) { forecast in
-            formatDay(forecast.dt, weatherResponse.city.timezone ?? 0)
-        }
+        guard let dailyForecasts = weatherResponse.daily else { return [] }
 
-        return groupedData.map { (day, forecasts) in
-            let minTemp = forecasts.map { $0.main.temp_min }.min() ?? 0
-            let maxTemp = forecasts.map { $0.main.temp_max }.max() ?? 0
-            let description = forecasts.first?.weather.first?.description.capitalized ?? "N/A"
-            let icon = mapWeatherIcon(forecasts.first?.weather.first?.icon ?? "01d")
+        return dailyForecasts.enumerated().map { index, forecast in
+            let day = index == 0 ? "Today" : formatDay(forecast.dt, weatherResponse.timezoneOffset)
+            let icon = mapWeatherIcon(forecast.weather.first?.icon ?? "01d")
+            let description = forecast.weather.first?.description.capitalized ?? "N/A"
+            let minTemp = Int(forecast.temp.min)
+            let maxTemp = Int(forecast.temp.max)
 
-            return DailyWeather(day: day, icon: icon, minTemp: Int(minTemp), maxTemp: Int(maxTemp), description: description)
+            return DailyWeather(day: day, icon: icon, minTemp: minTemp, maxTemp: maxTemp, description: description)
         }
-        .sorted { $0.day < $1.day }
     }
 
-    var globalMinTemp: Int { weeklyData.map { $0.minTemp }.min() ?? 0 }
-    var globalMaxTemp: Int { weeklyData.map { $0.maxTemp }.max() ?? 1 }
+
+    var globalMinTemp: Int {
+        weeklyData.map { $0.minTemp }.min() ?? 0
+    }
+
+    var globalMaxTemp: Int {
+        weeklyData.map { $0.maxTemp }.max() ?? 1
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) { // ✅ Even spacing
+        VStack(alignment: .leading, spacing: 12) {
             Text("Weekly Forecast")
                 .font(.system(size: 22, weight: .bold))
                 .foregroundColor(.white)
@@ -32,19 +36,21 @@ struct WeeklyForecastView: View {
             VStack(spacing: 0) {
                 ForEach(weeklyData, id: \.day) { weather in
                     WeeklyWeatherRow(weather: weather, globalMin: globalMinTemp, globalMax: globalMaxTemp)
+
                     if weather.day != weeklyData.last?.day {
                         Divider().background(Color.white.opacity(0.1))
                     }
                 }
             }
-            .padding(.vertical, 8) // ✅ Inner padding without reducing box width
-            .background(Color(red: 56/255, green: 56/255, blue: 56/255)) // ✅ Dark gray box
+            .padding(.vertical, 8)
+            .background(Color(red: 56 / 255, green: 56 / 255, blue: 56 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .padding(.horizontal, 16)
         }
         .background(Color(red: 0.156, green: 0.156, blue: 0.156))
     }
 }
+
 
 // ✅ **Row UI for Each Day**
 struct WeeklyWeatherRow: View {

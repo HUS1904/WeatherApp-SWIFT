@@ -8,7 +8,7 @@ struct CityInfoView: View {
         VStack(alignment: .center, spacing: 8) {
         
             // City Name & Country
-            Text("\(weatherResponse.city.name.uppercased()), \(weatherResponse.city.country.uppercased())")
+            Text("\(weatherResponse.cityName.uppercased()), \(weatherResponse.country.uppercased())")
                 .font(.system(size: 30, weight: .bold))
                 .foregroundColor(.white)
 
@@ -19,7 +19,7 @@ struct CityInfoView: View {
 
             // Temperature with custom color for "°"
             HStack(alignment: .firstTextBaseline, spacing: 0) {
-                Text("\(weatherResponse.list.first?.main.temp ?? 0, specifier: "%.0f")") // Temperature number
+                Text("\(weatherResponse.current.temp, specifier: "%.0f")") // Temperature number
                     .font(.system(size: 70, weight: .bold))
                     .foregroundColor(.white)
                 
@@ -28,14 +28,19 @@ struct CityInfoView: View {
                     .foregroundColor(Color(red: 0.89, green: 0.14, blue: 0.42))
             }
 
-            // Weather Description
-            Text(weatherResponse.list.first?.weather.first?.description.capitalized ?? "N/A")
-                .font(.system(size: 20, weight: .medium))
-                .foregroundColor(.white)
+            // Weather Summary
+            Text(weatherResponse.daily?.first?.summary ?? "No summary available")
+                .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)         // Centers each line
+                    .lineLimit(nil)                          // Unlimited lines (can be omitted; default is nil)
+                    .fixedSize(horizontal: false, vertical: true) // Allows wrapping
+                    .frame(maxWidth: .infinity)              // Ensures it takes full width of parent
+                    .padding(.horizontal, 16)
 
             // Feels Like Temperature with custom "°"
             HStack(alignment: .firstTextBaseline, spacing: 0) {
-                Text("Feels Like \(weatherResponse.list.first?.main.feels_like ?? 0, specifier: "%.0f")") // Text and number
+                Text("Feels Like \(weatherResponse.current.feelsLike, specifier: "%.0f")") // Text and number
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white.opacity(0.8))
                 
@@ -43,6 +48,7 @@ struct CityInfoView: View {
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(Color(red: 0.89, green: 0.14, blue: 0.42))
             }
+            .padding(.top,5)
         }
         .frame(maxWidth: .infinity)
                 .padding(.top, UIScreen.main.bounds.height * 0.12)

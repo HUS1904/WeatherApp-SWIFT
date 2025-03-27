@@ -1,58 +1,148 @@
 import Foundation
 
 struct WeatherResponse: Codable, Equatable {
-    let cod: String
-    let message: Int?
-    let cnt: Int?
-    let list: [WeatherForecast]
-    let city: CityInfo
+    let lat: Double
+    let lon: Double
+    let timezone: String
+    let timezoneOffset: Int
+    let current: CurrentWeather
+    let minutely: [MinutelyForecast]?
+    let hourly: [HourlyForecast]?
+    let daily: [DailyForecast]?
+    let alerts: [WeatherAlert]?
 
-    // ✅ Implement Equatable manually
+    // Manually added
+    var cityName: String = ""
+    var country: String = ""
+
+    enum CodingKeys: String, CodingKey {
+        case lat, lon, timezone
+        case timezoneOffset = "timezone_offset"
+        case current, minutely, hourly, daily, alerts
+    }
+
     static func == (lhs: WeatherResponse, rhs: WeatherResponse) -> Bool {
-        return lhs.city.name == rhs.city.name &&
-               lhs.city.coord.lat == rhs.city.coord.lat &&
-               lhs.city.coord.lon == rhs.city.coord.lon
+        return lhs.lat == rhs.lat &&
+               lhs.lon == rhs.lon &&
+               lhs.cityName == rhs.cityName &&
+               lhs.country == rhs.country
     }
 }
 
-struct CityInfo: Codable, Equatable {
-    let id: Int?
-    let name: String
-    let coord: Coordinates
-    let country: String
-    let population: Int?
-    let timezone: Int?
+struct CurrentWeather: Codable, Equatable {
+    let dt: Int
     let sunrise: Int?
     let sunset: Int?
-}
-
-struct Coordinates: Codable, Equatable {
-    let lat: Double
-    let lon: Double
-}
-
-struct WeatherForecast: Codable, Equatable {
-    let dt: Int
-    let main: MainWeather
-    let weather: [WeatherDetail]
-    let clouds: Clouds
-    let wind: Wind
-    let visibility: Int?
-    let pop: Double?
-    let sys: Sys
-    let dt_txt: String
-    let rain: Rain?
-}
-
-struct MainWeather: Codable, Equatable {
     let temp: Double
-    let feels_like: Double
-    let temp_min: Double
-    let temp_max: Double
+    let feelsLike: Double
     let pressure: Int
     let humidity: Int
-    let sea_level: Int?
-    let grnd_level: Int?
+    let dewPoint: Double
+    let uvi: Double
+    let clouds: Int
+    let visibility: Int
+    let windSpeed: Double
+    let windDeg: Int
+    let weather: [WeatherDetail]
+
+    enum CodingKeys: String, CodingKey {
+        case dt, sunrise, sunset, temp
+        case feelsLike = "feels_like"
+        case pressure, humidity
+        case dewPoint = "dew_point"
+        case uvi, clouds, visibility
+        case windSpeed = "wind_speed"
+        case windDeg = "wind_deg"
+        case weather
+    }
+}
+
+struct MinutelyForecast: Codable, Equatable {
+    let dt: Int
+    let precipitation: Double
+}
+
+struct HourlyForecast: Codable, Equatable {
+    let dt: Int
+    let temp: Double
+    let feelsLike: Double
+    let pressure: Int
+    let humidity: Int
+    let dewPoint: Double
+    let uvi: Double
+    let clouds: Int
+    let visibility: Int
+    let windSpeed: Double
+    let windDeg: Int
+    let windGust: Double?
+    let weather: [WeatherDetail]
+    let pop: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case dt, temp
+        case feelsLike = "feels_like"
+        case pressure, humidity
+        case dewPoint = "dew_point"
+        case uvi, clouds, visibility
+        case windSpeed = "wind_speed"
+        case windDeg = "wind_deg"
+        case windGust = "wind_gust"
+        case weather, pop
+    }
+}
+
+struct DailyForecast: Codable, Equatable {
+    let dt: Int
+    let sunrise: Int
+    let sunset: Int
+    let moonrise: Int
+    let moonset: Int
+    let moonPhase: Double
+    let summary: String? // ✅ New field added here
+    let temp: Temperature
+    let feelsLike: FeelsLike
+    let pressure: Int
+    let humidity: Int
+    let dewPoint: Double
+    let windSpeed: Double
+    let windDeg: Int
+    let windGust: Double?
+    let weather: [WeatherDetail]
+    let clouds: Int
+    let pop: Double
+    let uvi: Double
+    let rain: Double?
+
+    enum CodingKeys: String, CodingKey {
+        case dt, sunrise, sunset, moonrise, moonset
+        case moonPhase = "moon_phase"
+        case summary // ✅ Included in CodingKeys
+        case temp
+        case feelsLike = "feels_like"
+        case pressure, humidity
+        case dewPoint = "dew_point"
+        case windSpeed = "wind_speed"
+        case windDeg = "wind_deg"
+        case windGust = "wind_gust"
+        case weather, clouds, pop, uvi, rain
+    }
+}
+
+
+struct Temperature: Codable, Equatable {
+    let day: Double
+    let min: Double
+    let max: Double
+    let night: Double
+    let eve: Double
+    let morn: Double
+}
+
+struct FeelsLike: Codable, Equatable {
+    let day: Double
+    let night: Double
+    let eve: Double
+    let morn: Double
 }
 
 struct WeatherDetail: Codable, Equatable {
@@ -62,24 +152,16 @@ struct WeatherDetail: Codable, Equatable {
     let icon: String
 }
 
-struct Clouds: Codable, Equatable {
-    let all: Int
-}
-
-struct Wind: Codable, Equatable {
-    let speed: Double
-    let deg: Int
-    let gust: Double?
-}
-
-struct Sys: Codable, Equatable {
-    let pod: String
-}
-
-struct Rain: Codable, Equatable {
-    let last3Hours: Double?
+struct WeatherAlert: Codable, Equatable {
+    let senderName: String
+    let event: String
+    let start: Int
+    let end: Int
+    let description: String
+    let tags: [String]
 
     enum CodingKeys: String, CodingKey {
-        case last3Hours = "3h"
+        case senderName = "sender_name"
+        case event, start, end, description, tags
     }
 }

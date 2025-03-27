@@ -7,27 +7,23 @@ struct CityCardView: View {
 
     var body: some View {
         Button(action: {
-            print("📍 Tapped city: \(weatherResponse.city.name)")
+            print("📍 Tapped city: \(weatherResponse.cityName)")
             onSelect?()
         }) {
             HStack(alignment: .top) {
                 // Left side: City info
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("\(weatherResponse.city.name), \(weatherResponse.city.country)")
+                    Text("\(weatherResponse.cityName), \(weatherResponse.country)")
                         .font(.headline)
                         .foregroundColor(.white)
 
-                    if let timezone = weatherResponse.city.timezone {
-                        Text("Time: \(formatUnixTime(Int(Date().timeIntervalSince1970), timezone))")
-                            .font(.caption)
-                            .foregroundColor(.white)
-                    }
+                    Text("Time: \(formatUnixTime(Int(Date().timeIntervalSince1970), weatherResponse.timezoneOffset))")
+                        .font(.caption)
+                        .foregroundColor(.white)
 
-                    if let forecast = weatherResponse.list.first {
-                        Text("\(forecast.main.temp, specifier: "%.0f")°  \(forecast.weather.first?.description.capitalized ?? "N/A")")
-                            .font(.caption)
-                            .foregroundColor(.white)
-                    }
+                    Text("\(weatherResponse.current.temp, specifier: "%.0f")°  \(weatherResponse.current.weather.first?.description.capitalized ?? "N/A")")
+                        .font(.caption)
+                        .foregroundColor(.white)
                 }
 
                 Spacer()
@@ -36,7 +32,7 @@ struct CityCardView: View {
                 VStack(alignment: .trailing, spacing: 6) {
                     HStack(spacing: 16) {
                         Button(action: {
-                            print("🗑 Trash tapped for \(weatherResponse.city.name)")
+                            print("🗑 Trash tapped for \(weatherResponse.cityName)")
                             onDelete?()
                         }) {
                             Image(systemName: "trash.fill")
@@ -47,7 +43,7 @@ struct CityCardView: View {
                         .buttonStyle(PlainButtonStyle())
 
                         Button(action: {
-                            print("⭐️ Star tapped for \(weatherResponse.city.name)")
+                            print("⭐️ Star tapped for \(weatherResponse.cityName)")
                         }) {
                             Image(systemName: "star.fill")
                                 .resizable()
@@ -57,21 +53,19 @@ struct CityCardView: View {
                         .buttonStyle(PlainButtonStyle())
                     }
 
-                    if let forecast = weatherResponse.list.first {
-                        Text("Humidity: \(forecast.main.humidity)%")
+                    Text("Humidity: \(weatherResponse.current.humidity)%")
+                        .font(.caption2)
+                        .foregroundColor(.white)
+                        .padding(.top, 6)
+
+                    if let rain = weatherResponse.hourly?.first?.pop {
+                        Text("Rain: \(rain * 100, specifier: "%.1f")%")
                             .font(.caption2)
                             .foregroundColor(.white)
-                            .padding(.top, 6)
-
-                        if let rain = forecast.rain?.last3Hours {
-                            Text("Rain: \(rain, specifier: "%.1f") mm")
-                                .font(.caption2)
-                                .foregroundColor(.white)
-                        } else {
-                            Text("Rain: 0.0 mm")
-                                .font(.caption2)
-                                .foregroundColor(.white)
-                        }
+                    } else {
+                        Text("Rain: 0.0 mm")
+                            .font(.caption2)
+                            .foregroundColor(.white)
                     }
                 }
             }

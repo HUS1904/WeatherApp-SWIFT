@@ -2,12 +2,38 @@ import Foundation
 
 class WeatherService {
     private let apiKey = APIKey.openWeatherAPIKey
-    private let baseURL = "https://api.openweathermap.org/data/2.5/forecast"
+    private let forecastBaseURL = "https://api.openweathermap.org/data/3.0/onecall"
 
-    // ✅ Fetch weather by coordinates (Used after fetching coordinates from search)
+    // ✅ Fetch weather using One Call 3.0 (includes UV index)
     func fetchWeather(lat: Double, lon: Double) async throws -> WeatherResponse {
-        let urlString = "\(baseURL)?lat=\(lat)&lon=\(lon)&units=metric&appid=\(apiKey)"
-        return try await fetchWeatherData(from: urlString)
+        let forecastURL = "\(forecastBaseURL)?lat=\(lat)&lon=\(lon)&units=metric&exclude=minutely,alerts&appid=\(apiKey)"
+        var response = try await fetchWeatherData(from: forecastURL)
+
+        // ✅ Fetch city name + country via reverse geocode
+        if let cityInfo = try await reverseGeocode(lat: lat, lon: lon) {
+            response.cityName = cityInfo.name
+            response.country = cityInfo.country
+        }
+
+        return response
+    }
+
+    // ✅ Reverse geocoding to get city/country from coordinates
+    func reverseGeocode(lat: Double, lon: Double) async throws -> CitySearchResult? {
+        let urlString = "https://api.openweathermap.org/geo/1.0/reverse?lat=\(lat)&lon=\(lon)&limit=1&appid=\(apiKey)"
+
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw APIError.requestFailed
+        }
+
+        let results = try JSONDecoder().decode([CitySearchResult].self, from: data)
+        return results.first
     }
 
     // ✅ Search cities (returns city details including coordinates)
@@ -25,16 +51,10 @@ class WeatherService {
             throw APIError.requestFailed
         }
 
-        do {
-            return try JSONDecoder().decode([CitySearchResult].self, from: data)
-        } catch {
-            // Replace "decodingFailed" with the already existing "decodingError":
-            throw APIError.decodingError
-
-        }
+        return try JSONDecoder().decode([CitySearchResult].self, from: data)
     }
 
-    // ✅ Reusable fetch logic
+    // ✅ Forecast fetch logic
     private func fetchWeatherData(from urlString: String) async throws -> WeatherResponse {
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
@@ -46,11 +66,6 @@ class WeatherService {
             throw APIError.requestFailed
         }
 
-        // Temporary debugging
-        if let jsonString = String(data: data, encoding: .utf8) {
-            //print("🟢 JSON Response: \(jsonString)")
-        }
-
         do {
             return try JSONDecoder().decode(WeatherResponse.self, from: data)
         } catch {
@@ -58,7 +73,6 @@ class WeatherService {
             throw APIError.decodingError
         }
     }
-
 }
 
 // ✅ Model to decode city search results from Geo API

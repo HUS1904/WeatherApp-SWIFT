@@ -2,9 +2,9 @@ import SwiftUI
 
 struct SunTimeView: View {
     let weatherResponse: WeatherResponse
-    var sunRise: Int { weatherResponse.city.sunrise ?? 0}
-    var sunSet: Int { weatherResponse.city.sunset ?? 0}
-    var timeZoneOffset: Int { weatherResponse.city.timezone ?? 0} // ✅ Timezone offset in seconds
+    var sunRise: Int { weatherResponse.current.sunrise ?? 0}
+    var sunSet: Int { weatherResponse.current.sunset ?? 0}
+    var timeZoneOffset: Int { weatherResponse.timezoneOffset} // ✅ Timezone offset in seconds
     var currentTime: Int {Int(Date().timeIntervalSince1970)}
     var progress: Double {
         let totalDaylight = Double(sunSet - sunRise)

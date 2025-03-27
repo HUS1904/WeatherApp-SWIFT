@@ -25,7 +25,7 @@ struct MainWeatherView: View {
                     Spacer()
                 }
 
-                if let weatherResponse = weatherViewModel.currentWeather {
+                if let weatherResponse = weatherViewModel.weatherResponse {
                     CityInfoView(weatherResponse: weatherResponse)
                         .padding(.top, -80)
 
@@ -37,6 +37,23 @@ struct MainWeatherView: View {
 
                     WeeklyForecastView(weatherResponse: weatherResponse)
                         .padding(.top, 30)
+                    
+                    HStack(spacing: 12) {
+                        RainWidget(weatherResponse: weatherResponse)
+                        FeelsLikeWidget(weatherResponse: weatherResponse)
+                    }
+                    .padding(.top, 10)
+                    
+                    HStack(spacing: 12) {
+                        AirHumidityWidgetView(weatherResponse: weatherResponse)
+                        UvIndexWidgetView(weatherResponse: weatherResponse)
+                    }
+                    .padding(.top, 10)
+
+
+                    SunTimeView(weatherResponse: weatherResponse)
+                        .padding(.top, 190)
+                    
                 } else {
                     ProgressView("Fetching weather...")
                         .padding(.top, 15)
@@ -47,11 +64,11 @@ struct MainWeatherView: View {
         .onAppear {
             weatherViewModel.fetchWeatherForCurrentLocation(forceRefresh: false)
         }
-        .onChange(of: weatherViewModel.currentWeather) { newWeather in
-            if let weather = newWeather {
+        .onChange(of: weatherViewModel.weatherResponse) { oldValue, newValue in
+            if let weather = newValue {
                 searchViewModel.addCurrentLocation(
-                    latitude: weather.city.coord.lat,
-                    longitude: weather.city.coord.lon,
+                    latitude: weather.lat,
+                    longitude: weather.lon,
                     weatherResponse: weather
                 )
             }

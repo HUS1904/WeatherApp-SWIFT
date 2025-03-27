@@ -1,5 +1,5 @@
 import Foundation
 
 struct APIKey {
-    static let openWeatherAPIKey = "d63ace15f43fa9ad250fcd0b88a420cd"
+    static let openWeatherAPIKey = "e35f8c5de9cca640232d69f980665335"
 }

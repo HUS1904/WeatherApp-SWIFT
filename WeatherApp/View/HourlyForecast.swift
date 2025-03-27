@@ -8,20 +8,17 @@ struct HourlyForecastView: View {
     }
 
     var hourlyData: [HourlyWeather] {
-        let processedData = weatherResponse.list.map { forecast in
-            let time = formatUnixTime(forecast.dt, weatherResponse.city.timezone ?? 0)
+        (weatherResponse.hourly ?? []).prefix(24).map { forecast in
+            let time = formatUnixTime(forecast.dt, weatherResponse.timezoneOffset)
             let icon = mapWeatherIcon(forecast.weather.first?.icon ?? "01d")
             let description = forecast.weather.first?.description.capitalized ?? "N/A"
-            let temp = "\(Int(forecast.main.temp))°"
-
+            let temp = "\(Int(forecast.temp))°"
             return HourlyWeather(time: time, icon: icon, description: description, temp: temp)
         }
-
-        return processedData
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) { // ✅ Even spacing
+        VStack(alignment: .leading, spacing: 12) {
             Text("Hourly Forecast")
                 .font(.system(size: 22, weight: .bold))
                 .foregroundColor(.white)
@@ -35,12 +32,12 @@ struct HourlyForecastView: View {
                 }
                 .padding(.horizontal, 16)
             }
-
-            Spacer()
         }
         .background(Color(red: 0.156, green: 0.156, blue: 0.156))
     }
 }
+
+
 
 struct HourlyWeatherView: View {
     let weather: HourlyWeather

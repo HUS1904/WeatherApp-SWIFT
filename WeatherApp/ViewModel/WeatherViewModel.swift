@@ -3,9 +3,9 @@ import CoreLocation
 
 @MainActor
 class WeatherViewModel: ObservableObject {
-    @Published var currentWeather: WeatherResponse? {
+    @Published var weatherResponse: WeatherResponse? {
         didSet {
-            print("✅ Updated currentWeather: \(String(describing: currentWeather?.city.name))") // ✅ Debugging
+            print("✅ Updated currentWeather: \(String(describing: weatherResponse?.cityName))") // ✅ Debugging
         }
     }
 
@@ -18,7 +18,7 @@ class WeatherViewModel: ObservableObject {
                 do {
                     print("📍 Fetching weather for: \(location.latitude), \(location.longitude)")
                     let weatherResponse = try await self?.weatherService.fetchWeather(lat: location.latitude, lon: location.longitude)
-                    self?.currentWeather = weatherResponse
+                    self?.weatherResponse = weatherResponse
                     print("✅ Weather fetched")
                 } catch {
                     print("❌ Error fetching weather: \(error.localizedDescription)")
@@ -29,6 +29,6 @@ class WeatherViewModel: ObservableObject {
     }
 
     func setWeatherForCity(weatherResponse: WeatherResponse) {
-        self.currentWeather = weatherResponse
+        self.weatherResponse = weatherResponse
     }
 }
