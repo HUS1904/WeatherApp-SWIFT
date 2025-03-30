@@ -49,11 +49,12 @@ struct MainWeatherView: View {
                         UvIndexWidgetView(weatherResponse: weatherResponse)
                     }
                     .padding(.top, 10)
-
-
-                    SunTimeView(weatherResponse: weatherResponse)
-                        .padding(.top, 190)
                     
+                    WindWidgetView(weatherResponse: weatherResponse)
+                        .padding(.top, 10)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 50)
+
                 } else {
                     ProgressView("Fetching weather...")
                         .padding(.top, 15)
