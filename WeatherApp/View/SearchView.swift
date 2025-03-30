@@ -12,13 +12,11 @@ struct SearchView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // ✅ Header
                 SearchHeaderView {
                     dismiss()
                     searchViewModel.clearSearch()
                 }
 
-                // ✅ Search bar
                 SearchBarView(
                     searchQuery: $searchQuery,
                     isSearchFieldFocused: _isSearchFieldFocused,
@@ -34,7 +32,7 @@ struct SearchView: View {
                         searchViewModel.clearSearch()
                     }
                 )
-                .onChange(of: isSearchFieldFocused) { focused in
+                .onChange(of: isSearchFieldFocused) { _, focused in
                     if focused {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                             withAnimation {
@@ -48,7 +46,6 @@ struct SearchView: View {
                     }
                 }
 
-                // ✅ City list / search results
                 Group {
                     if isSearchFieldFocused {
                         SearchResultsList(

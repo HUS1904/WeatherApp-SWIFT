@@ -25,7 +25,7 @@ struct SearchBarView: View {
                         .padding(10)
                         .tint(Color(red: 0.89, green: 0.14, blue: 0.42))
                         .focused($isSearchFieldFocused)
-                        .onChange(of: searchQuery) { newValue in
+                        .onChange(of: searchQuery) { _, newValue in
                             onSearchChanged(newValue)
                         }
                 }

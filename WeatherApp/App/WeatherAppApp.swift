@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct WeatherAppApp: App {
     @StateObject private var weatherViewModel = WeatherViewModel()
-    @StateObject private var searchViewModel = SearchViewModel() // ✅ Add this
+    @StateObject private var searchViewModel = SearchViewModel()
 
     var body: some Scene {
         WindowGroup {
@@ -11,7 +11,7 @@ struct WeatherAppApp: App {
                 MainWeatherView()
             }
             .environmentObject(weatherViewModel)
-            .environmentObject(searchViewModel) // ✅ Inject SearchViewModel here
+            .environmentObject(searchViewModel)
         }
     }
 }

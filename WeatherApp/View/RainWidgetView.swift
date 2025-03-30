@@ -22,13 +22,12 @@ struct RainWidget: View {
                     .font(.system(size: 15))
                     .foregroundColor(.gray)
 
-                
                 Text(String(format: "%.1f mm of rain is expected\nin the next 24 hours", rainNext24Hours))
                     .font(.system(size: 10))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(nil) // Allow unlimited lines
-                    .fixedSize(horizontal: false, vertical: true) // Expand vertically if needed
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 5)
             }
         }

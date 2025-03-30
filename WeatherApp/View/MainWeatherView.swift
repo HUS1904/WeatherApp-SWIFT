@@ -37,24 +37,23 @@ struct MainWeatherView: View {
 
                     WeeklyForecastView(weatherResponse: weatherResponse)
                         .padding(.top, 30)
-                    
+
                     HStack(spacing: 12) {
                         RainWidget(weatherResponse: weatherResponse)
                         FeelsLikeWidget(weatherResponse: weatherResponse)
                     }
                     .padding(.top, 10)
-                    
+
                     HStack(spacing: 12) {
                         AirHumidityWidgetView(weatherResponse: weatherResponse)
                         UvIndexWidgetView(weatherResponse: weatherResponse)
                     }
                     .padding(.top, 10)
-                    
+
                     WindWidgetView(weatherResponse: weatherResponse)
                         .padding(.top, 10)
                         .padding(.horizontal, 16)
                         .padding(.bottom, 50)
-
                 } else {
                     ProgressView("Fetching weather...")
                         .padding(.top, 15)

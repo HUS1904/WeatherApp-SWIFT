@@ -13,10 +13,8 @@ struct WeatherWidgetBox<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Icon + Title
             HStack(spacing: 6) {
                 Image(systemName: iconName)
-                    
                     .frame(width: 20, height: 20)
                     .foregroundStyle(Color(red: 0.89, green: 0.14, blue: 0.42))
 
@@ -27,7 +25,7 @@ struct WeatherWidgetBox<Content: View>: View {
 
             content
 
-            Spacer(minLength: 0) // Pushes content upward consistently
+            Spacer(minLength: 0)
         }
         .padding(.init(top: 16, leading: 0, bottom: 16, trailing: 16))
         .frame(width: 180, height: 160)

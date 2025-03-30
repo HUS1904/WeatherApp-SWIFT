@@ -10,8 +10,6 @@ struct WeatherResponse: Codable, Equatable {
     let hourly: [HourlyForecast]?
     let daily: [DailyForecast]?
     let alerts: [WeatherAlert]?
-
-    // Manually added
     var cityName: String = ""
     var country: String = ""
 
@@ -98,7 +96,7 @@ struct DailyForecast: Codable, Equatable {
     let moonrise: Int
     let moonset: Int
     let moonPhase: Double
-    let summary: String? // ✅ New field added here
+    let summary: String?
     let temp: Temperature
     let feelsLike: FeelsLike
     let pressure: Int
@@ -116,7 +114,7 @@ struct DailyForecast: Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case dt, sunrise, sunset, moonrise, moonset
         case moonPhase = "moon_phase"
-        case summary // ✅ Included in CodingKeys
+        case summary
         case temp
         case feelsLike = "feels_like"
         case pressure, humidity
@@ -127,7 +125,6 @@ struct DailyForecast: Codable, Equatable {
         case weather, clouds, pop, uvi, rain
     }
 }
-
 
 struct Temperature: Codable, Equatable {
     let day: Double

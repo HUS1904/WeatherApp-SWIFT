@@ -46,7 +46,6 @@ struct UvIndexWidgetView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(uvColor)
 
-                // 👇 Adjust this value to control the max bar length
                 let maxBarWidth: CGFloat = 140
 
                 ZStack(alignment: .leading) {

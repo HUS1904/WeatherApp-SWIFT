@@ -1,10 +1,3 @@
-//
-//  WindWidgetView.swift
-//  WeatherApp
-//
-//  Created by Hussein Jarrah on 30/03/2025.
-//
-
 import SwiftUI
 
 struct WindWidgetView: View {
@@ -13,13 +6,14 @@ struct WindWidgetView: View {
     var windSpeed: Double {
         weatherResponse.hourly?.first?.windSpeed ?? 0.0
     }
+
     var windGust: Double {
         weatherResponse.hourly?.first?.windGust ?? 0.0
     }
+
     var windDirection: Int {
         weatherResponse.hourly?.first?.windDeg ?? 0
     }
-
 
     var body: some View {
         HStack(spacing: 12) {
@@ -43,7 +37,8 @@ struct WindWidgetView: View {
                         Text("\(String(format: "%.1f", windSpeed)) m/s")
                             .font(.system(size: 15, weight: .bold))
                             .foregroundColor(.white)
-                    }.padding(.top, 10)
+                    }
+                    .padding(.top, 10)
 
                     Divider()
                         .background(Color.white.opacity(0.3))
@@ -75,7 +70,6 @@ struct WindWidgetView: View {
 
             Spacer()
 
-            // Placeholder for CompassView, implementation later
             WindCompassView(direction: Double(windDirection))
                 .frame(width: 120, height: 80)
         }
@@ -85,4 +79,3 @@ struct WindWidgetView: View {
         .shadow(radius: 2)
     }
 }
-

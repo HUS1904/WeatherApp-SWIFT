@@ -37,8 +37,6 @@ struct HourlyForecastView: View {
     }
 }
 
-
-
 struct HourlyWeatherView: View {
     let weather: HourlyWeather
     let isFirst: Bool
@@ -52,7 +50,7 @@ struct HourlyWeatherView: View {
             Image(systemName: weather.icon)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 23, height: 23) // ✅ Fixed size
+                .frame(width: 23, height: 23)
                 .foregroundColor(.white)
 
             Text(weather.description)
@@ -68,6 +66,7 @@ struct HourlyWeatherView: View {
         .frame(width: 75, height: 140)
         .background(isFirst ? Color(red: 0.89, green: 0.14, blue: 0.42) : Color(red: 56/255, green: 56/255, blue: 56/255))
         .clipShape(RoundedRectangle(cornerRadius: 15))
+        .shadow(radius: 5)
     }
 }
 

@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-// ✅ Convert UNIX timestamp to readable time format (adjusted for timezone)
 func formatUnixTime(_ timestamp: Int, _ timeZoneOffset: Int) -> String {
     let adjustedTime = timestamp
     let date = Date(timeIntervalSince1970: TimeInterval(adjustedTime))
@@ -13,10 +12,6 @@ func formatUnixTime(_ timestamp: Int, _ timeZoneOffset: Int) -> String {
     return formatter.string(from: date)
 }
 
-
-
-
-// ✅ Map OpenWeather icons to SF Symbols
 func mapWeatherIcon(_ iconCode: String) -> String {
     switch iconCode {
     case "01d": return "sun.max.fill"
@@ -33,13 +28,40 @@ func mapWeatherIcon(_ iconCode: String) -> String {
     }
 }
 
-// ✅ Convert UNIX timestamp to a **weekday name** (Mon, Tue, etc.)
+func backgroundImage(for description: String, currentTime: Int, sunriseTime: Int, sunsetTime: Int) -> String {
+    let description = description.lowercased()
+
+    if description.contains("rain") {
+        return "nbackrain"
+    } else if description.contains("storm") || description.contains("thunder") {
+        return "nbackstorm"
+    } else if description.contains("snow") {
+        return "nbacksnow"
+    } else if description.contains("fog") || description.contains("mist") {
+        return "nbackfog"
+    } else if description.contains("clear") {
+        if currentTime >= sunriseTime && currentTime < sunsetTime {
+            return "nbacksun"
+        } else {
+            return "nbackmoon"
+        }
+    } else if description.contains("sun") {
+        return "nbacksun"
+    } else if description.contains("cloud") {
+        return "nbackcloud"
+    } else if description.contains("moon") || description.contains("night") {
+        return "nbackmoon"
+    } else {
+        return "nbackcloud"
+    }
+}
+
 func formatDay(_ timestamp: Int, _ timeZoneOffset: Int) -> String {
     let adjustedTime = timestamp + timeZoneOffset
     let date = Date(timeIntervalSince1970: TimeInterval(adjustedTime))
 
     let formatter = DateFormatter()
-    formatter.dateFormat = "EEE" // ✅ Abbreviated day name (Mon, Tue, etc.)
+    formatter.dateFormat = "EEE"
     formatter.timeZone = TimeZone(secondsFromGMT: timeZoneOffset)
 
     return formatter.string(from: date)

@@ -24,8 +24,8 @@ struct FeelsLikeWidget: View {
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(nil) // Allow unlimited lines
-                    .fixedSize(horizontal: false, vertical: true) // Expand vertically if needed
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 5)
             }
         }

@@ -3,17 +3,14 @@ import SwiftUI
 struct AirHumidityWidgetView: View {
     let weatherResponse: WeatherResponse
 
-    // Humidity as Int
     var airHumidity: Int {
         Int(weatherResponse.current.humidity)
     }
 
-    // Temperature in °C
     var temperature: Double {
         weatherResponse.current.temp
     }
 
-    // Calculate Dew Point using Magnus formula
     var dewPoint: Double {
         weatherResponse.current.dewPoint
     }

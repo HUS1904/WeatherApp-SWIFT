@@ -22,7 +22,6 @@ struct SearchHeaderView: View {
 
             Spacer()
 
-            // Dummy space to balance the back button width
             Image(systemName: "chevron.backward.square")
                 .resizable()
                 .opacity(0)

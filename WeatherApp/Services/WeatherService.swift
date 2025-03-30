@@ -4,12 +4,10 @@ class WeatherService {
     private let apiKey = APIKey.openWeatherAPIKey
     private let forecastBaseURL = "https://api.openweathermap.org/data/3.0/onecall"
 
-    // ✅ Fetch weather using One Call 3.0 (includes UV index)
     func fetchWeather(lat: Double, lon: Double) async throws -> WeatherResponse {
         let forecastURL = "\(forecastBaseURL)?lat=\(lat)&lon=\(lon)&units=metric&exclude=minutely,alerts&appid=\(apiKey)"
         var response = try await fetchWeatherData(from: forecastURL)
 
-        // ✅ Fetch city name + country via reverse geocode
         if let cityInfo = try await reverseGeocode(lat: lat, lon: lon) {
             response.cityName = cityInfo.name
             response.country = cityInfo.country
@@ -18,7 +16,6 @@ class WeatherService {
         return response
     }
 
-    // ✅ Reverse geocoding to get city/country from coordinates
     func reverseGeocode(lat: Double, lon: Double) async throws -> CitySearchResult? {
         let urlString = "https://api.openweathermap.org/geo/1.0/reverse?lat=\(lat)&lon=\(lon)&limit=1&appid=\(apiKey)"
 
@@ -36,7 +33,6 @@ class WeatherService {
         return results.first
     }
 
-    // ✅ Search cities (returns city details including coordinates)
     func searchCity(cityName: String) async throws -> [CitySearchResult] {
         let encodedCity = cityName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? cityName
         let urlString = "https://api.openweathermap.org/geo/1.0/direct?q=\(encodedCity)&limit=5&appid=\(apiKey)"
@@ -54,7 +50,6 @@ class WeatherService {
         return try JSONDecoder().decode([CitySearchResult].self, from: data)
     }
 
-    // ✅ Forecast fetch logic
     private func fetchWeatherData(from urlString: String) async throws -> WeatherResponse {
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
@@ -69,13 +64,12 @@ class WeatherService {
         do {
             return try JSONDecoder().decode(WeatherResponse.self, from: data)
         } catch {
-            print("❌ Decoding error: \(error)")
+            print("Decoding error: \(error)")
             throw APIError.decodingError
         }
     }
 }
 
-// ✅ Model to decode city search results from Geo API
 struct CitySearchResult: Codable, Identifiable {
     let id = UUID()
     let name: String

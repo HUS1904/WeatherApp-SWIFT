@@ -17,7 +17,7 @@ class SearchViewModel: ObservableObject {
             do {
                 searchResults = try await weatherService.searchCity(cityName: cityName)
             } catch {
-                print("❌ Error searching city '\(cityName)': \(error.localizedDescription)")
+                print("Error searching city '\(cityName)': \(error.localizedDescription)")
                 searchResults = []
             }
         }
@@ -35,22 +35,19 @@ class SearchViewModel: ObservableObject {
         }
 
         guard !isAlreadySaved else {
-            print("⚠️ City already saved: \(city.name), \(city.country)")
+            print("City already saved: \(city.name), \(city.country)")
             return
         }
 
         Task {
             do {
                 var weather = try await weatherService.fetchWeather(lat: city.lat, lon: city.lon)
-
-                // Manually attach city info since One Call doesn't include it
                 weather.cityName = city.name
                 weather.country = city.country
-
                 savedCities.append(weather)
-                print("✅ Added new city: \(weather.cityName), \(weather.country)")
+                print("Added new city: \(weather.cityName), \(weather.country)")
             } catch {
-                print("❌ Error fetching weather for city '\(city.name)': \(error)")
+                print("Error fetching weather for city '\(city.name)': \(error)")
             }
         }
     }
@@ -61,16 +58,16 @@ class SearchViewModel: ObservableObject {
         }
 
         guard !isAlreadySaved else {
-            print("⚠️ Current location already saved: \(weatherResponse.cityName)")
+            print("Current location already saved: \(weatherResponse.cityName)")
             return
         }
 
         savedCities.insert(weatherResponse, at: 0)
-        print("✅ Current location added: \(weatherResponse.cityName)")
+        print("Current location added: \(weatherResponse.cityName)")
     }
 
     func removeCity(_ weather: WeatherResponse) {
-        print("🗑 Removing: \(weather.cityName)")
+        print("Removing: \(weather.cityName)")
         savedCities.removeAll {
             $0.cityName == weather.cityName &&
             $0.country == weather.country &&

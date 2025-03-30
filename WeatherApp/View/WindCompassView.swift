@@ -1,10 +1,3 @@
-//
-//  WindCompassView.swift
-//  WeatherApp
-//
-//  Created by Hussein Jarrah on 30/03/2025.
-//
-
 import SwiftUI
 
 struct WindCompassView: View {
@@ -44,6 +37,7 @@ struct WindCompassView: View {
             }
         }
         .frame(width: frameSize, height: frameSize)
+        .shadow(radius: 5)
     }
 
     struct CompassMarker: Hashable {
@@ -91,14 +85,10 @@ struct WindCompassView: View {
 
         private func labelRotation(for label: String) -> Angle {
             switch label {
-            case "E":
-                return Angle(degrees: -90)
-            case "S":
-                return Angle(degrees: -180)
-            case "W":
-                return Angle(degrees: 90)
-            default:
-                return Angle(degrees: 0)
+            case "E": return Angle(degrees: -90)
+            case "S": return Angle(degrees: -180)
+            case "W": return Angle(degrees: 90)
+            default: return Angle(degrees: 0)
             }
         }
     }
@@ -112,4 +102,3 @@ struct WindCompassView: View {
         return directions[index % 16]
     }
 }
-

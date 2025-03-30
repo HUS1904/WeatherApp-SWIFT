@@ -7,11 +7,10 @@ struct CityCardView: View {
 
     var body: some View {
         Button(action: {
-            print("📍 Tapped city: \(weatherResponse.cityName)")
+            print("Tapped city: \(weatherResponse.cityName)")
             onSelect?()
         }) {
             HStack(alignment: .top) {
-                // Left side: City info
                 VStack(alignment: .leading, spacing: 6) {
                     Text("\(weatherResponse.cityName), \(weatherResponse.country)")
                         .font(.headline)
@@ -28,11 +27,10 @@ struct CityCardView: View {
 
                 Spacer()
 
-                // Right side: Buttons + humidity & rain
                 VStack(alignment: .trailing, spacing: 6) {
                     HStack(spacing: 16) {
                         Button(action: {
-                            print("🗑 Trash tapped for \(weatherResponse.cityName)")
+                            print("Trash tapped for \(weatherResponse.cityName)")
                             onDelete?()
                         }) {
                             Image(systemName: "trash.fill")
@@ -43,7 +41,7 @@ struct CityCardView: View {
                         .buttonStyle(PlainButtonStyle())
 
                         Button(action: {
-                            print("⭐️ Star tapped for \(weatherResponse.cityName)")
+                            print("Star tapped for \(weatherResponse.cityName)")
                         }) {
                             Image(systemName: "star.fill")
                                 .resizable()

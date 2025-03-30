@@ -5,7 +5,7 @@ import CoreLocation
 class WeatherViewModel: ObservableObject {
     @Published var weatherResponse: WeatherResponse? {
         didSet {
-            print("✅ Updated currentWeather: \(String(describing: weatherResponse?.cityName))") // ✅ Debugging
+            print("Updated currentWeather: \(String(describing: weatherResponse?.cityName))")
         }
     }
 
@@ -16,16 +16,16 @@ class WeatherViewModel: ObservableObject {
         locationService.onLocationUpdate = { [weak self] location in
             Task {
                 do {
-                    print("📍 Fetching weather for: \(location.latitude), \(location.longitude)")
+                    print("Fetching weather for: \(location.latitude), \(location.longitude)")
                     let weatherResponse = try await self?.weatherService.fetchWeather(lat: location.latitude, lon: location.longitude)
                     self?.weatherResponse = weatherResponse
-                    print("✅ Weather fetched")
+                    print("Weather fetched")
                 } catch {
-                    print("❌ Error fetching weather: \(error.localizedDescription)")
+                    print("Error fetching weather: \(error.localizedDescription)")
                 }
             }
         }
-        locationService.requestLocation()  // ✅ Triggers permission request & fetches location
+        locationService.requestLocation()
     }
 
     func setWeatherForCity(weatherResponse: WeatherResponse) {

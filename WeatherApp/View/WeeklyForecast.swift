@@ -17,7 +17,6 @@ struct WeeklyForecastView: View {
         }
     }
 
-
     var globalMinTemp: Int {
         weeklyData.map { $0.minTemp }.min() ?? 0
     }
@@ -46,13 +45,12 @@ struct WeeklyForecastView: View {
             .background(Color(red: 56 / 255, green: 56 / 255, blue: 56 / 255))
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .padding(.horizontal, 16)
+            .shadow(radius: 2)
         }
         .background(Color(red: 0.156, green: 0.156, blue: 0.156))
     }
 }
 
-
-// ✅ **Row UI for Each Day**
 struct WeeklyWeatherRow: View {
     let weather: DailyWeather
     let globalMin: Int
@@ -68,7 +66,7 @@ struct WeeklyWeatherRow: View {
             Image(systemName: weather.icon)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 23, height: 23) // ✅ Fixed size
+                .frame(width: 23, height: 23)
                 .foregroundColor(.white)
 
             Text("\(weather.minTemp)°")
@@ -91,7 +89,7 @@ struct WeeklyWeatherRow: View {
                         .offset(x: geometry.size.width * minOffset)
                 }
             }
-            .frame(width: 100, height: 6) // ✅ Shorter width, smaller height
+            .frame(width: 100, height: 6)
             .padding(.horizontal, 4)
 
             Text("\(weather.maxTemp)°")
@@ -99,11 +97,10 @@ struct WeeklyWeatherRow: View {
                 .foregroundColor(.white)
                 .frame(width: 30, alignment: .leading)
         }
-        .padding(.vertical, 8) // ✅ Even spacing
+        .padding(.vertical, 8)
     }
 }
 
-// ✅ **Weather Data Model for Weekly Forecast**
 struct DailyWeather {
     let day: String
     let icon: String
