@@ -17,9 +17,11 @@ class WeatherViewModel: ObservableObject {
             Task {
                 do {
                     print("Fetching weather for: \(location.latitude), \(location.longitude)")
-                    let weatherResponse = try await self?.weatherService.fetchWeather(lat: location.latitude, lon: location.longitude)
-                    self?.weatherResponse = weatherResponse
-                    print("Weather fetched")
+                    if var weatherResponse = try await self?.weatherService.fetchWeather(lat: location.latitude, lon: location.longitude) {
+                        weatherResponse.id = UUID() // ✅ assign new UUID here
+                        self?.weatherResponse = weatherResponse
+                        print("Weather fetched")
+                    }
                 } catch {
                     print("Error fetching weather: \(error.localizedDescription)")
                 }

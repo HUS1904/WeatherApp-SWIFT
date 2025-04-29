@@ -34,9 +34,12 @@ struct SearchView: View {
                 )
                 .onChange(of: isSearchFieldFocused) { _, focused in
                     if focused {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            withAnimation {
-                                showCancelButton = true
+                        Task {
+                            try? await Task.sleep(nanoseconds: 200_000_000)
+                            await MainActor.run {
+                                withAnimation {
+                                    showCancelButton = true
+                                }
                             }
                         }
                     } else {
@@ -45,6 +48,7 @@ struct SearchView: View {
                         }
                     }
                 }
+
 
                 Group {
                     if isSearchFieldFocused {

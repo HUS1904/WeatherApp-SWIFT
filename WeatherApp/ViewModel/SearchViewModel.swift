@@ -6,6 +6,11 @@ class SearchViewModel: ObservableObject {
     @Published var searchResults: [CitySearchResult] = []
 
     private let weatherService = WeatherService()
+    private let savedCitiesKey = "savedCitiesKey"
+    
+    init() {
+        loadCities()
+    }
 
     func searchCity(cityName: String) {
         guard cityName.count > 2 else {
@@ -44,7 +49,9 @@ class SearchViewModel: ObservableObject {
                 var weather = try await weatherService.fetchWeather(lat: city.lat, lon: city.lon)
                 weather.cityName = city.name
                 weather.country = city.country
+                weather.id = UUID() // ✅ Assign a new UUID
                 savedCities.append(weather)
+                saveCities()
                 print("Added new city: \(weather.cityName), \(weather.country)")
             } catch {
                 print("Error fetching weather for city '\(city.name)': \(error)")
@@ -68,12 +75,8 @@ class SearchViewModel: ObservableObject {
 
     func removeCity(_ weather: WeatherResponse) {
         print("Removing: \(weather.cityName)")
-        savedCities.removeAll {
-            $0.cityName == weather.cityName &&
-            $0.country == weather.country &&
-            abs($0.lat - weather.lat) < 0.0001 &&
-            abs($0.lon - weather.lon) < 0.0001
-        }
+        savedCities.removeAll { $0.id == weather.id }
+        saveCities()
     }
 
     func clearSearchResults() {
@@ -87,5 +90,40 @@ class SearchViewModel: ObservableObject {
     func addCityAndClearSearch(_ city: CitySearchResult) {
         addCity(city)
         clearSearch()
+    }
+    
+    func saveCities() {
+        do {
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(savedCities)
+            let url = getCitiesFileURL()
+            try data.write(to: url)
+            print("Cities saved to file")
+        } catch {
+            print("Error saving cities to file: \(error)")
+        }
+    }
+
+
+    func loadCities() {
+        let url = getCitiesFileURL()
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            print("⚠️ No saved cities file found")
+            return
+        }
+
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            savedCities = try decoder.decode([WeatherResponse].self, from: data)
+            print("✅ Cities loaded from file")
+        } catch {
+            print("❌ Error loading cities from file: \(error)")
+        }
+    }
+    
+    private func getCitiesFileURL() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0].appendingPathComponent("cities.json")
     }
 }

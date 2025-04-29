@@ -1,6 +1,7 @@
 import Foundation
 
-struct WeatherResponse: Codable, Equatable {
+struct WeatherResponse: Codable, Equatable, Identifiable {
+    var id: UUID = UUID() 
     let lat: Double
     let lon: Double
     let timezone: String
@@ -20,12 +21,10 @@ struct WeatherResponse: Codable, Equatable {
     }
 
     static func == (lhs: WeatherResponse, rhs: WeatherResponse) -> Bool {
-        return lhs.lat == rhs.lat &&
-               lhs.lon == rhs.lon &&
-               lhs.cityName == rhs.cityName &&
-               lhs.country == rhs.country
+        return lhs.id == rhs.id
     }
 }
+
 
 struct CurrentWeather: Codable, Equatable {
     let dt: Int
