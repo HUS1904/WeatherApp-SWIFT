@@ -9,8 +9,14 @@ class WeatherViewModel: ObservableObject {
         }
     }
 
-    private let weatherService = WeatherService()
-    private let locationService = LocationService()
+    private var weatherService = WeatherService()
+    private var locationService = LocationService()
+    
+    init(weatherService: WeatherService = WeatherService(), locationService: LocationService = LocationService()) {
+        self.weatherService = weatherService
+        self.locationService = locationService
+        fetchWeatherForCurrentLocation()
+    }
 
     func fetchWeatherForCurrentLocation(forceRefresh: Bool = false) {
         locationService.onLocationUpdate = { [weak self] location in
@@ -18,9 +24,8 @@ class WeatherViewModel: ObservableObject {
                 do {
                     print("Fetching weather for: \(location.latitude), \(location.longitude)")
                     if var weatherResponse = try await self?.weatherService.fetchWeather(lat: location.latitude, lon: location.longitude) {
-                        weatherResponse.id = UUID() // ✅ assign new UUID here
+                        weatherResponse.id = UUID()
                         self?.weatherResponse = weatherResponse
-                        print("Weather fetched")
                     }
                 } catch {
                     print("Error fetching weather: \(error.localizedDescription)")
@@ -33,4 +38,15 @@ class WeatherViewModel: ObservableObject {
     func setWeatherForCity(weatherResponse: WeatherResponse) {
         self.weatherResponse = weatherResponse
     }
+    
+    func setWeatherForCoordinates(lat: Double, lon: Double) async {
+        do {
+            var weather = try await weatherService.fetchWeather(lat: lat, lon: lon)
+            weather.id = UUID()
+            self.weatherResponse = weather
+        } catch {
+            print("Failed to fetch weather: \(error.localizedDescription)")
+        }
+    }
+
 }

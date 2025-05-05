@@ -31,18 +31,13 @@ final class SearchViewModelTests: XCTestCase {
     }
 
     func testToggleFavoriteUpdatesFlag() throws {
-        // 1. Create dummy weather response
         var dummyWeather = WeatherResponse.dummy()
         dummyWeather.id = UUID()
         dummyWeather.isFavorite = false
 
-        // 2. Add to savedCities
         viewModel.savedCities = [dummyWeather]
-
-        // 3. Toggle favorite
         viewModel.toggleFavorite(for: dummyWeather)
 
-        // 4. Verify toggle
         let updated = viewModel.savedCities.first(where: { $0.id == dummyWeather.id })
 
         XCTAssertNotNil(updated)
@@ -50,39 +45,28 @@ final class SearchViewModelTests: XCTestCase {
     }
 
     func testRemoveCityActuallyRemovesIt() throws {
-        // 1. Create dummy city
         var dummyWeather = WeatherResponse.dummy()
         dummyWeather.id = UUID()
 
-        // 2. Add to savedCities
         viewModel.savedCities = [dummyWeather]
-
-        // 3. Remove the city
         viewModel.removeCity(dummyWeather)
 
-        // 4. Assert it's gone
         let exists = viewModel.savedCities.contains { $0.id == dummyWeather.id }
-
         XCTAssertFalse(exists, "City should be removed from savedCities")
     }
-    
+
     func testSaveAndLoadCitiesPersistsFavorites() throws {
-        // 1. Create dummy city
         var dummyWeather = WeatherResponse.dummy()
         dummyWeather.id = UUID()
         dummyWeather.isFavorite = true
 
-        // 2. Add and save
         viewModel.savedCities = [dummyWeather]
         viewModel.saveCities()
 
-        // 3. Create new instance and load
         let newViewModel = SearchViewModel()
-
         let reloaded = newViewModel.savedCities.first(where: { $0.id == dummyWeather.id })
 
-        // 4. Assert
-        XCTAssertNotNil(reloaded, "❌ City should be loaded from file")
-        XCTAssertTrue(reloaded?.isFavorite == true, "❌ Favorite flag should persist as true")
+        XCTAssertNotNil(reloaded, "City should be loaded from file")
+        XCTAssertTrue(reloaded?.isFavorite == true, "Favorite flag should persist as true")
     }
 }

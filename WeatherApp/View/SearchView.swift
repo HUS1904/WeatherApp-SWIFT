@@ -49,7 +49,6 @@ struct SearchView: View {
                     }
                 }
 
-
                 Group {
                     if isSearchFieldFocused {
                         SearchResultsList(
@@ -63,11 +62,9 @@ struct SearchView: View {
                                             searchQuery = ""
                                         }
                                     } catch {
-                                        print("❌ Failed to add city: \(error)")
+                                        // Handle silently in release
                                     }
                                 }
-                                isSearchFieldFocused = false
-                                searchQuery = ""
                             }
                         )
                     } else {

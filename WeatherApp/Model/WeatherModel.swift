@@ -1,7 +1,7 @@
 import Foundation
 
 struct WeatherResponse: Codable, Equatable, Identifiable {
-    var id: UUID = UUID()  // Provide fallback value
+    var id: UUID = UUID()
     let lat: Double
     let lon: Double
     let timezone: String
@@ -21,7 +21,6 @@ struct WeatherResponse: Codable, Equatable, Identifiable {
         case current, minutely, hourly, daily, alerts, cityName, country, isFavorite
     }
 
-    // ✅ Custom init to provide fallback ID if missing
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -40,7 +39,6 @@ struct WeatherResponse: Codable, Equatable, Identifiable {
         isFavorite = try container.decodeIfPresent(Bool.self, forKey: .isFavorite) ?? false
     }
 
-    // Required for Encodable conformance
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
@@ -62,7 +60,7 @@ struct WeatherResponse: Codable, Equatable, Identifiable {
     static func == (lhs: WeatherResponse, rhs: WeatherResponse) -> Bool {
         lhs.id == rhs.id
     }
-    
+
     init(
         id: UUID = UUID(),
         lat: Double,
@@ -92,11 +90,7 @@ struct WeatherResponse: Codable, Equatable, Identifiable {
         self.country = country
         self.isFavorite = isFavorite
     }
-
 }
-
-
-
 
 struct CurrentWeather: Codable, Equatable {
     let dt: Int

@@ -8,7 +8,6 @@ struct CityCardView: View {
 
     var body: some View {
         Button(action: {
-            print("Tapped city: \(weatherResponse.cityName)")
             onSelect?()
         }) {
             HStack(alignment: .top) {

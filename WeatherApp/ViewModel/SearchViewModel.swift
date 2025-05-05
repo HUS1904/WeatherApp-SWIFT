@@ -21,7 +21,6 @@ class SearchViewModel: ObservableObject {
             do {
                 searchResults = try await weatherService.searchCity(cityName: cityName)
             } catch {
-                print("Error searching city '\(cityName)': \(error.localizedDescription)")
                 searchResults = []
             }
         }
@@ -34,13 +33,8 @@ class SearchViewModel: ObservableObject {
             abs(saved.lat - city.lat) < 0.0001 &&
             abs(saved.lon - city.lon) < 0.0001
         }
-        
-        print("Checking for duplicate: \(city.name), \(city.country) -> Already saved? \(isAlreadySaved)")
 
-        guard !isAlreadySaved else {
-            print("City already saved: \(city.name), \(city.country)")
-            return
-        }
+        guard !isAlreadySaved else { return }
 
         var weather = try await weatherService.fetchWeather(lat: city.lat, lon: city.lon)
         weather.cityName = city.name
@@ -48,24 +42,18 @@ class SearchViewModel: ObservableObject {
         weather.id = UUID()
         weather.isFavorite = false
         savedCities.append(weather)
-        print("Added new city: \(weather.cityName), \(weather.country)")
     }
 
-
     func addCurrentLocation(latitude: Double, longitude: Double, weatherResponse: WeatherResponse) {
-        let isAlreadySaved = savedCities.contains { saved in
-            abs(saved.lat - latitude) < 0.01 && abs(saved.lon - longitude) < 0.01
+        let isAlreadySaved = savedCities.contains {
+            abs($0.lat - latitude) < 0.01 && abs($0.lon - longitude) < 0.01
         }
 
-        guard !isAlreadySaved else {
-            print("Current location already saved: \(weatherResponse.cityName)")
-            return
-        }
+        guard !isAlreadySaved else { return }
 
         var current = weatherResponse
         current.isFavorite = false
         savedCities.insert(current, at: 0)
-        print("✅ Current location added: \(current.cityName)")
     }
 
     func removeCity(_ weather: WeatherResponse) {
@@ -95,31 +83,22 @@ class SearchViewModel: ObservableObject {
     func saveCities() {
         do {
             let favoritesOnly = savedCities.filter { $0.isFavorite }
-            let encoder = JSONEncoder()
-            let data = try encoder.encode(favoritesOnly)
-            let url = getCitiesFileURL()
-            try data.write(to: url)
-            print("✅ Favorites saved to file")
+            let data = try JSONEncoder().encode(favoritesOnly)
+            try data.write(to: getCitiesFileURL())
         } catch {
-            print("❌ Error saving cities to file: \(error)")
+            // Handle silently in production
         }
     }
 
     func loadCities() {
         let url = getCitiesFileURL()
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            print("⚠️ No saved cities file found")
-            return
-        }
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
 
         do {
             let data = try Data(contentsOf: url)
-            let decoder = JSONDecoder()
-            let cachedFavorites = try decoder.decode([WeatherResponse].self, from: data)
-            savedCities = cachedFavorites // ✅ Not append
-            print("✅ Cities loaded from file")
+            savedCities = try JSONDecoder().decode([WeatherResponse].self, from: data)
         } catch {
-            print("❌ Error loading cities from file: \(error)")
+            // Handle silently in production
         }
     }
 
