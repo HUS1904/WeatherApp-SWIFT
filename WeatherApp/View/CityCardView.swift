@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CityCardView: View {
+    @EnvironmentObject var searchViewModel: SearchViewModel
     let weatherResponse: WeatherResponse
     var onDelete: (() -> Void)? = nil
     var onSelect: (() -> Void)? = nil
@@ -30,23 +31,22 @@ struct CityCardView: View {
                 VStack(alignment: .trailing, spacing: 6) {
                     HStack(spacing: 16) {
                         Button(action: {
-                            print("Trash tapped for \(weatherResponse.cityName)")
                             onDelete?()
                         }) {
                             Image(systemName: "trash.fill")
                                 .resizable()
                                 .frame(width: 20, height: 20)
-                                .foregroundColor(Color(red: 0.89, green: 0.14, blue: 0.42))
+                                .foregroundColor(.pink)
                         }
                         .buttonStyle(PlainButtonStyle())
 
                         Button(action: {
-                            print("Star tapped for \(weatherResponse.cityName)")
+                            searchViewModel.toggleFavorite(for: weatherResponse)
                         }) {
-                            Image(systemName: "star.fill")
+                            Image(systemName: weatherResponse.isFavorite ? "star.fill" : "star")
                                 .resizable()
                                 .frame(width: 20, height: 20)
-                                .foregroundColor(.yellow)
+                                .foregroundColor(weatherResponse.isFavorite ? .yellow : .gray)
                         }
                         .buttonStyle(PlainButtonStyle())
                     }

@@ -1,7 +1,7 @@
 import Foundation
 
 struct WeatherResponse: Codable, Equatable, Identifiable {
-    var id: UUID = UUID() 
+    var id: UUID = UUID()  // Provide fallback value
     let lat: Double
     let lon: Double
     let timezone: String
@@ -13,17 +13,89 @@ struct WeatherResponse: Codable, Equatable, Identifiable {
     let alerts: [WeatherAlert]?
     var cityName: String = ""
     var country: String = ""
+    var isFavorite: Bool = false
 
     enum CodingKeys: String, CodingKey {
-        case lat, lon, timezone
+        case id, lat, lon, timezone
         case timezoneOffset = "timezone_offset"
-        case current, minutely, hourly, daily, alerts
+        case current, minutely, hourly, daily, alerts, cityName, country, isFavorite
+    }
+
+    // ✅ Custom init to provide fallback ID if missing
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        lat = try container.decode(Double.self, forKey: .lat)
+        lon = try container.decode(Double.self, forKey: .lon)
+        timezone = try container.decode(String.self, forKey: .timezone)
+        timezoneOffset = try container.decode(Int.self, forKey: .timezoneOffset)
+        current = try container.decode(CurrentWeather.self, forKey: .current)
+        minutely = try container.decodeIfPresent([MinutelyForecast].self, forKey: .minutely)
+        hourly = try container.decodeIfPresent([HourlyForecast].self, forKey: .hourly)
+        daily = try container.decodeIfPresent([DailyForecast].self, forKey: .daily)
+        alerts = try container.decodeIfPresent([WeatherAlert].self, forKey: .alerts)
+        cityName = try container.decodeIfPresent(String.self, forKey: .cityName) ?? ""
+        country = try container.decodeIfPresent(String.self, forKey: .country) ?? ""
+        isFavorite = try container.decodeIfPresent(Bool.self, forKey: .isFavorite) ?? false
+    }
+
+    // Required for Encodable conformance
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(id, forKey: .id)
+        try container.encode(lat, forKey: .lat)
+        try container.encode(lon, forKey: .lon)
+        try container.encode(timezone, forKey: .timezone)
+        try container.encode(timezoneOffset, forKey: .timezoneOffset)
+        try container.encode(current, forKey: .current)
+        try container.encodeIfPresent(minutely, forKey: .minutely)
+        try container.encodeIfPresent(hourly, forKey: .hourly)
+        try container.encodeIfPresent(daily, forKey: .daily)
+        try container.encodeIfPresent(alerts, forKey: .alerts)
+        try container.encode(cityName, forKey: .cityName)
+        try container.encode(country, forKey: .country)
+        try container.encode(isFavorite, forKey: .isFavorite)
     }
 
     static func == (lhs: WeatherResponse, rhs: WeatherResponse) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
+    
+    init(
+        id: UUID = UUID(),
+        lat: Double,
+        lon: Double,
+        timezone: String,
+        timezoneOffset: Int,
+        current: CurrentWeather,
+        minutely: [MinutelyForecast]? = nil,
+        hourly: [HourlyForecast]? = nil,
+        daily: [DailyForecast]? = nil,
+        alerts: [WeatherAlert]? = nil,
+        cityName: String = "",
+        country: String = "",
+        isFavorite: Bool = false
+    ) {
+        self.id = id
+        self.lat = lat
+        self.lon = lon
+        self.timezone = timezone
+        self.timezoneOffset = timezoneOffset
+        self.current = current
+        self.minutely = minutely
+        self.hourly = hourly
+        self.daily = daily
+        self.alerts = alerts
+        self.cityName = cityName
+        self.country = country
+        self.isFavorite = isFavorite
+    }
+
 }
+
+
 
 
 struct CurrentWeather: Codable, Equatable {

@@ -55,7 +55,17 @@ struct SearchView: View {
                         SearchResultsList(
                             searchResults: searchViewModel.searchResults,
                             onSelectCity: { city in
-                                searchViewModel.addCityAndClearSearch(city)
+                                Task {
+                                    do {
+                                        try await searchViewModel.addCityAndClearSearch(city)
+                                        await MainActor.run {
+                                            isSearchFieldFocused = false
+                                            searchQuery = ""
+                                        }
+                                    } catch {
+                                        print("❌ Failed to add city: \(error)")
+                                    }
+                                }
                                 isSearchFieldFocused = false
                                 searchQuery = ""
                             }
